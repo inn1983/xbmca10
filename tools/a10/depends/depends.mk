@@ -8,8 +8,8 @@
 #
 
 #your home dir
-#HOME=$(shell echo ~)
-HOME=/opt/a10hacking
+HOME=$(shell echo ~)
+#HOME=/opt/a10hacking
 #where your tarballs go
 TARBALLS=$(HOME)/xbmctmp/tarballs
 #whether to compile for armhf
@@ -41,7 +41,6 @@ SDKSTAGE=/
 XBMCPREFIX=/allwinner/xbmc-pvr-bin$(HF)
 #where is your toolchain
 TOOLCHAIN=/usr
-
 JOBS=1
 export HOST=arm-linux-gnueabi$(HF)
 export BUILD=arm-linux-gnueabi$(HF)
@@ -53,15 +52,14 @@ else
 #
 
 #where is your arm rootfs
-SDKSTAGE=$(HOME)/rootfs/debrootfs
+SDKSTAGE=/mnt/a20rootfs
 #where is your xbmc install root 
 XBMCPREFIX=/allwinner/xbmc-pvr-bin$(HF)
 #where is your toolchain
 TOOLCHAIN=/usr/arm-linux-gnueabi$(HF)
-
 JOBS=4
 export HOST=arm-linux-gnueabi$(HF)
-export BUILD=i686-linux
+export BUILD=amd64-linux
 export CROSS_COMPILE=${HOST}-
 
 endif
@@ -103,7 +101,7 @@ ${RLINK_PATH} \
 -L${SDKSTAGE}/usr/lib/arm-linux-gnueabi$(HF)
 
 ifeq ($(USEARMHF), 1)
-export CFLAGS=-pipe -O3 -mfloat-abi=hard -mtune=cortex-a8 -mcpu=cortex-a8 -D__ARM_NEON__ -DALLWINNERA10
+export CFLAGS=-pipe -O3 -g -mfloat-abi=hard -mtune=cortex-a8 -mcpu=cortex-a8 -D__ARM_NEON__ -DALLWINNERA10
 else
 export CFLAGS=-pipe -O3 -mfloat-abi=softfp -mtune=cortex-a8 -mcpu=cortex-a8 -D__ARM_NEON__ -DALLWINNERA10
 endif

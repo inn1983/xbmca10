@@ -1055,7 +1055,8 @@ void CGUIWindowVideoNav::GetContextButtons(int itemNumber, CContextButtons &butt
             if (info && info->Content() != CONTENT_NONE)
             {
               buttons.Add(CONTEXT_BUTTON_SET_CONTENT, 20442);
-              buttons.Add(CONTEXT_BUTTON_SCAN, 13349);
+              if (info && g_application.IsVideoScanning())
+                buttons.Add(CONTEXT_BUTTON_SCAN, 13349);
             }
             else
               buttons.Add(CONTEXT_BUTTON_SET_CONTENT, 20333);
@@ -1648,8 +1649,7 @@ bool CGUIWindowVideoNav::ApplyWatchedFilter(CFileItemList &items)
     filterWatched = true;
   if (!items.IsVideoDb())
     filterWatched = true;
-  if (items.GetContent() == "tvshows" &&
-     (items.IsSmartPlayList() || (items.HasProperty("library.filter") && items.GetProperty("library.filter").asBoolean())))
+  if (items.IsSmartPlayList() && items.GetContent() == "tvshows")
     node = NODE_TYPE_TITLE_TVSHOWS; // so that the check below works
 
   int watchMode = g_settings.GetWatchMode(m_vecItems->GetContent());

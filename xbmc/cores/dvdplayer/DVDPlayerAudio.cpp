@@ -284,7 +284,7 @@ int CDVDPlayerAudio::DecodeFrame(DVDAudioFrame &audioframe, bool bDropPacket)
         CLog::Log(LOGERROR, "CDVDPlayerAudio:DecodeFrame - Codec tried to consume more data than available. Potential memory corruption");
         m_decode.Release();
         m_pAudioCodec->Reset();
-        return DECODE_FLAG_ERROR;
+        assert(0);
       }
 
       m_decode.data += len;

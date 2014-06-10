@@ -24,7 +24,6 @@
 
 #include "threads/Thread.h"
 #include "threads/Event.h"
-#include "threads/CriticalSection.h"
 #include "addons/IAddon.h"
 
 class XBPython;
@@ -43,7 +42,6 @@ public:
   void setAddon(ADDON::AddonPtr _addon) { addon = _addon; }
 
 protected:
-  CCriticalSection m_critSec;
   XBPython *m_pExecuter;
   CEvent stoppedEvent;
   void *m_threadState;

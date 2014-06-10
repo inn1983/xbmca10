@@ -27,7 +27,7 @@ static long g_cedaropen = 0;
 #define A10ENABLE_MPEG1         CODEC_OK
 #define A10ENABLE_MPEG2         CODEC_OK
 #define A10ENABLE_H264          CODEC_OK
-#define A10ENABLE_H263          CODEC_OK //fails completely
+#define A10ENABLE_H263          CODEC_BAD //fails completely
 #define A10ENABLE_VC1_WVC1      CODEC_OK
 #define A10ENABLE_VP6           CODEC_OK
 #define A10ENABLE_VP8           CODEC_OK
@@ -36,8 +36,8 @@ static long g_cedaropen = 0;
 #define A10ENABLE_WMV1          CODEC_OK
 #define A10ENABLE_WMV2          CODEC_OK
 #define A10ENABLE_WMV3          CODEC_OK
-#define A10ENABLE_MPEG4V1       CODEC_OK //??
-#define A10ENABLE_MPEG4V2       CODEC_OK //fails completely
+#define A10ENABLE_MPEG4V1       CODEC_BAD //??
+#define A10ENABLE_MPEG4V2       CODEC_BAD //fails completely
 #define A10ENABLE_MPEG4V3       CODEC_OK
 #define A10ENABLE_DIVX4         CODEC_OK
 #define A10ENABLE_DIVX5         CODEC_OK
@@ -112,8 +112,6 @@ bool CDVDVideoCodecA10::Open(CDVDStreamInfo &hints, CDVDCodecOptions &options)
 
 #ifdef MEDIAINFO
   CLog::Log(LOGDEBUG, "A10: MEDIAINFO: fpsrate %d / fpsscale %d\n", m_hints.fpsrate, m_hints.fpsscale);
-  CLog::Log(LOGDEBUG, "A10: MEDIAINFO: Framerate %d \n", m_info.frame_rate);
-  CLog::Log(LOGDEBUG, "A10: MEDIAINFO: Frame Duration %d \n", m_info.frame_duration);
   CLog::Log(LOGDEBUG, "A10: MEDIAINFO: CodecID %d \n", m_hints.codec);
   CLog::Log(LOGDEBUG, "A10: MEDIAINFO: StreamType %d \n", m_hints.type);
   CLog::Log(LOGDEBUG, "A10: MEDIAINFO: Level %d \n", m_hints.level);
@@ -253,34 +251,22 @@ bool CDVDVideoCodecA10::Open(CDVDStreamInfo &hints, CDVDCodecOptions &options)
     //DX40/DIVX4, divx
 #if A10ENABLE_DIVX4
     case _4CC('D','I','V','X'):
-    case _4CC('d','i','v','x'):
       m_info.sub_format = CEDARV_MPEG4_SUB_FORMAT_DIVX4;
       break;
 #endif
     //DX50/DIVX5
 #if A10ENABLE_DIVX5
     case _4CC('D','X','5','0'):
-    case _4CC('d','x','5','0'):
     case _4CC('D','I','V','5'):
-    case _4CC('d','i','v','5'):
       m_info.sub_format = CEDARV_MPEG4_SUB_FORMAT_DIVX5;
       break;
 #endif
    //XVID
 #if A10ENABLE_XVID
     case _4CC('X','V','I','D'):
-    case _4CC('x','v','i','d'):
-    case _4CC('X','v','i','D'):
     case _4CC('M','P','4','V'):
-    case _4CC('m','p','4','v'):
-    case _4CC('M','P','4','S'):
-    case _4CC('m','p','4','s'):
     case _4CC('P','M','P','4'):
-    case _4CC('p','m','p','4'):
     case _4CC('F','M','P','4'):
-    case _4CC('f','m','p','4'):
-    case _4CC('X','V','I','X'):
-    case _4CC('x','v','i','x'):
       m_info.sub_format = CEDARV_MPEG4_SUB_FORMAT_XVID;
       break;
 #endif
@@ -295,10 +281,6 @@ bool CDVDVideoCodecA10::Open(CDVDStreamInfo &hints, CDVDCodecOptions &options)
     return false;
   }
 
-  CLog::Log(LOGNOTICE, "A10: CEDARV_FORMAT: %d\n", m_info.format);
-  CLog::Log(LOGNOTICE, "A10: CEDARV_SUBFORMAT: %d\n", m_info.sub_format);
-  CLog::Log(LOGNOTICE, "A10: CEDARV_CONTAINERFORMAT: %d\n", m_info.container_format);
-
   return DoOpen();
 }
 
@@ -311,20 +293,12 @@ bool CDVDVideoCodecA10::DoOpen()
     CLog::Log(LOGERROR, "A10: cedar already in use");
     return false;
   }
-  else
-  {
-    CLog::Log(LOGDEBUG, "A10: cedar not in use yet");
-  }
 
   m_hcedarv = libcedarv_init(&ret);
   if (ret < 0)
   {
     CLog::Log(LOGERROR, "A10: libcedarv_init failed. (%d)\n", ret);
     goto Error;
-  }
-  else
-  {
-    CLog::Log(LOGDEBUG, "A10: cedar initialized");
   }
 
   ret = m_hcedarv->set_vstream_info(m_hcedarv, &m_info);
@@ -333,10 +307,6 @@ bool CDVDVideoCodecA10::DoOpen()
     CLog::Log(LOGERROR, "A10: set_vstream_info failed. (%d)\n", ret);
     goto Error;
   }
-  else
-  {
-    CLog::Log(LOGDEBUG, "A10: vstream_info set");
-  }
 
   ret = m_hcedarv->open(m_hcedarv);
   if (ret < 0)
@@ -344,11 +314,6 @@ bool CDVDVideoCodecA10::DoOpen()
     CLog::Log(LOGERROR, "A10: open failed. (%d)\n", ret);
     goto Error;
   }
-  else
-  {
-    CLog::Log(LOGDEBUG, "A10: cedarv opened");
-  }
-
 
   m_hcedarv->ioctrl(m_hcedarv, CEDARV_COMMAND_RESET, 0);
 
@@ -357,10 +322,6 @@ bool CDVDVideoCodecA10::DoOpen()
   {
     CLog::Log(LOGERROR, "A10: CEDARV_COMMAND_PLAY failed. (%d)\n", ret);
     goto Error;
-  }
-  else
-  {
-    CLog::Log(LOGDEBUG, "A10: cedarv playing");
   }
 
   m_prebuffer = true;

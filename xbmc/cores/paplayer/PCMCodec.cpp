@@ -31,7 +31,6 @@ PCMCodec::PCMCodec()
   m_Channels = 2;
   m_BitsPerSample = 16;
   m_Bitrate = m_SampleRate * m_Channels * m_BitsPerSample;
-  m_DataFormat = AE_FMT_S16LE;
 }
 
 PCMCodec::~PCMCodec()

@@ -471,7 +471,7 @@ void CApplicationMessenger::ProcessMessage(ThreadMessage *pMsg)
         bool stopSlideshow = true;
         bool stopVideo = true;
         bool stopMusic = true;
-        if (pMsg->dwParam1 >= PLAYLIST_MUSIC && pMsg->dwParam1 <= PLAYLIST_PICTURE)
+        if (pMsg->dwParam1 >= 0)
         {
           stopSlideshow = (pMsg->dwParam1 == PLAYLIST_PICTURE);
           stopVideo = (pMsg->dwParam1 == PLAYLIST_VIDEO);

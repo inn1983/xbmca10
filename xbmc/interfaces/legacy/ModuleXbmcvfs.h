@@ -67,7 +67,7 @@ namespace XBMCAddon
     /**
      * exists(path)
      * 
-     * path        : file or folder (folder must end with slash or backslash)
+     * path        : file or fold
      * 
      * example:
      *   success = xbmcvfs.exists(path)

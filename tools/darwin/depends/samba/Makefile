@@ -3,7 +3,7 @@ include ../config.site.mk
 
 # lib name, version
 LIBNAME=samba
-VERSION=3.6.12
+VERSION=3.6.0
 SOURCE=$(LIBNAME)-$(VERSION)
 ARCHIVE=$(SOURCE).tar.gz
 
@@ -23,6 +23,7 @@ $(LIBDYLIB): $(TARBALLS_LOCATION)/$(ARCHIVE)
 	rm -rf $(SOURCE)
 	$(ARCHIVE_TOOL) $(ARCHIVE_TOOL_FLAGS) $(TARBALLS_LOCATION)/$(ARCHIVE)
 	echo $(SOURCE) > .gitignore
+	cd $(SOURCE); patch -p1 < ../01-bugfix-8385.patch
 	cd $(SOURCE)/source3; ./autogen.sh
 	cd $(SOURCE)/source3; $(CONFIGURE)
 	if test "$(DARWIN)" = "ios"; then \

@@ -162,11 +162,6 @@ bool CDVDFileInfo::ExtractThumb(const CStdString &strPath, CTextureDetails &deta
     CDVDStreamInfo hint(*pDemuxer->GetStream(nVideoStream), true);
     hint.software = true;
 
-#ifdef ALLWINNERA10
-      // always use ffmpeg for thumb extraction instead of A10 HW
-      CDVDCodecOptions dvdOptions;
-      pVideoCodec = CDVDFactoryCodec::OpenCodec(new CDVDVideoCodecFFmpeg(), hint, dvdOptions);
-#else
     if (hint.codec == CODEC_ID_MPEG2VIDEO || hint.codec == CODEC_ID_MPEG1VIDEO)
     {
       // libmpeg2 is not thread safe so use ffmepg for mpeg2/mpeg1 thumb extraction
@@ -177,7 +172,6 @@ bool CDVDFileInfo::ExtractThumb(const CStdString &strPath, CTextureDetails &deta
     {
       pVideoCodec = CDVDFactoryCodec::CreateVideoCodec( hint );
     }
-#endif
 
     if (pVideoCodec)
     {
@@ -301,9 +295,8 @@ bool CDVDFileInfo::GetFileStreamDetails(CFileItem *pItem)
   CStdString strFileNameAndPath;
   if (pItem->HasVideoInfoTag())
     strFileNameAndPath = pItem->GetVideoInfoTag()->m_strFileNameAndPath;
-
-  if (strFileNameAndPath.empty())
-    strFileNameAndPath = pItem->GetPath();
+  else
+    return false;
 
   CStdString playablePath = strFileNameAndPath;
   if (URIUtils::IsStack(playablePath))

@@ -35,9 +35,5 @@ public:
   virtual bool IsEOF();
   virtual int64_t GetLength();
 
-  virtual void    Abort()    { m_aborted = true;  }
-  bool            Aborted()  { return m_aborted;  }
-
 protected:
-  bool m_aborted;
 };

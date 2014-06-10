@@ -76,8 +76,7 @@ public:
   bool SetCurrentVolume(float fVolume);
   void SetDynamicRangeCompression(long drc) { m_drc = drc; }
   int SetPlaySpeed(int iSpeed);
-  void SubmitEOS();
-  bool IsEOS();
+  void WaitCompletion();
   void SwitchChannels(int iAudioStream, bool bAudioOnAllSpeakers);
 
   void Flush();
@@ -95,7 +94,6 @@ public:
   unsigned int SyncAC3(BYTE* pData, unsigned int iSize);
 
   bool BadState() { return !m_Initialized; };
-  unsigned int GetAudioRenderingLatency();
 
 private:
   IAudioCallback* m_pCallback;
@@ -150,6 +148,7 @@ protected:
   CAEChannelInfo    GetChannelLayout(AEAudioFormat format);
 
   void CheckOutputBufferSize(void **buffer, int *oldSize, int newSize);
+  unsigned int GetAudioRenderingLatency();
   CCriticalSection m_critSection;
 };
 #endif

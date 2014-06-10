@@ -90,9 +90,6 @@ bool CProgramThumbLoader::FillThumb(CFileItem &item)
 
 CStdString CProgramThumbLoader::GetLocalThumb(const CFileItem &item)
 {
-  if (item.IsAddonsPath())
-    return "";
-
   // look for the thumb
   if (item.m_bIsFolder)
   {

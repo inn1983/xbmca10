@@ -81,7 +81,6 @@ CPulseAE::CPulseAE()
   m_Context = NULL;
   m_MainLoop = NULL;
   m_muted = false;
-  m_Volume = 0.0f;
 }
 
 CPulseAE::~CPulseAE()

@@ -4003,17 +4003,24 @@ bool CMusicDatabase::GetRandomSong(CFileItem* item, int& idSong, const Filter &f
   {
     idSong = -1;
 
+    int iCount = GetSongsCount(filter);
+    if (iCount <= 0)
+      return false;
+    int iRandom = rand() % iCount;
+
     if (NULL == m_pDB.get()) return false;
     if (NULL == m_pDS.get()) return false;
 
     // We don't use PrepareSQL here, as the WHERE clause is already formatted
     CStdString strSQL = PrepareSQL("select %s from songview ", !filter.fields.empty() ? filter.fields.c_str() : "*");
     Filter extFilter = filter;
-    extFilter.AppendOrder(PrepareSQL("RANDOM()"));
+    extFilter.AppendOrder("idSong");
     extFilter.limit = "1";
 
     if (!CDatabase::BuildSQL(strSQL, extFilter, strSQL))
       return false;
+
+    strSQL += PrepareSQL(" OFFSET %i", iRandom);
 
     CLog::Log(LOGDEBUG, "%s query = %s", __FUNCTION__, strSQL.c_str());
     // run query

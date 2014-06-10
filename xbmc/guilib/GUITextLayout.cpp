@@ -52,6 +52,7 @@ CGUITextLayout::CGUITextLayout(CGUIFont *font, bool wrap, float fHeight, CGUIFon
   m_maxHeight = fHeight;
   m_textWidth = 0;
   m_textHeight = 0;
+  m_bTelop = false; //added by inn
 }
 
 void CGUITextLayout::SetWrap(bool bWrap)
@@ -104,6 +105,16 @@ void CGUITextLayout::RenderScrolling(float x, float y, float angle, color_t colo
   if (!m_font)
     return;
 
+  float scrollAmount = fabs(scrollInfo.GetPixelsPerFrame() * g_graphicsContext.GetGUIScaleX());	//added by inn
+  m_font->SetScrollAmount(scrollAmount);	//added by inn
+
+  if (m_font->GetHasRenderF()){	//added by inn
+	m_font->TelopBegin();
+	m_font->TelopEnd();
+	return;
+  }
+
+  m_bTelop = true;	//added by inn
   // set the main text color
   if (m_colors.size())
     m_colors[0] = color;
@@ -181,9 +192,7 @@ void CGUITextLayout::RenderOutline(float x, float y, color_t color, color_t outl
         align &= ~XBFONT_CENTER_X;
       }
 
-      // don't pass maxWidth through to the renderer for the same reason above: it will cause clipping
-      // on the left.
-      m_borderFont->DrawText(bx, by, outlineColors, 0, string.m_text, align, 0);
+      m_borderFont->DrawText(bx, by, outlineColors, 0, string.m_text, align, maxWidth);
       by += m_borderFont->GetLineHeight();
     }
     m_borderFont->End();
@@ -201,8 +210,7 @@ void CGUITextLayout::RenderOutline(float x, float y, color_t color, color_t outl
     if (align & XBFONT_JUSTIFIED && string.m_carriageReturn)
       align &= ~XBFONT_JUSTIFIED;
 
-    // don't pass maxWidth through to the renderer for the reason above.
-    m_font->DrawText(x, y, m_colors, 0, string.m_text, align, 0);
+    m_font->DrawText(x, y, m_colors, 0, string.m_text, align, maxWidth);
     y += m_font->GetLineHeight();
   }
   m_font->End();
@@ -559,6 +567,12 @@ void CGUITextLayout::CalcTextExtent()
   m_textWidth = 0;
   m_textHeight = 0;
   if (!m_font) return;
+
+  if (m_font->GetHasRenderF() && m_bTelop){	//added by inn
+	//m_font->Begin();
+	//m_font->End();
+	return;
+  }
 
   for (vector<CGUIString>::iterator i = m_lines.begin(); i != m_lines.end(); i++)
   {

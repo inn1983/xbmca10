@@ -26,7 +26,7 @@ namespace PERIPHERALS
   class CPeripheralTuner : public CPeripheral
   {
   public:
-    CPeripheralTuner(const PeripheralScanResult& scanResult);
+    CPeripheralTuner(const PeripheralType type, const PeripheralBusType busType, const CStdString &strLocation, const CStdString &strDeviceName, int iVendorId, int iProductId);
     virtual ~CPeripheralTuner(void) {};
   };
 }

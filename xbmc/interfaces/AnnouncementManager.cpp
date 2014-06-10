@@ -190,10 +190,7 @@ void CAnnouncementManager::Announce(AnnouncementFlag flag, const char *sender, c
       // TODO: Can be removed once this is properly handled when starting playback of a file
       item->SetProperty(LOOKUP_PROPERTY, false);
 
-      CStdString title = item->GetMusicInfoTag()->GetTitle();
-      if (title.IsEmpty())
-        title = item->GetLabel();
-      object["item"]["title"] = title;
+      object["item"]["title"] = item->GetMusicInfoTag()->GetTitle();
 
       if (item->GetMusicInfoTag()->GetTrackNumber() > 0)
         object["item"]["track"] = item->GetMusicInfoTag()->GetTrackNumber();

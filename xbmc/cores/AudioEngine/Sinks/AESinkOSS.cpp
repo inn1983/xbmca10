@@ -427,7 +427,7 @@ void CAESinkOSS::Drain()
   // ???
 }
 
-void CAESinkOSS::EnumerateDevicesEx(AEDeviceInfoList &list, bool force)
+void CAESinkOSS::EnumerateDevicesEx(AEDeviceInfoList &list)
 {
   int mixerfd;
   const char * mixerdev = "/dev/mixer";

@@ -27,7 +27,6 @@
 #include "ApplicationMessenger.h"
 #include "TextureCache.h"
 #include "filesystem/File.h"
-#include "utils/StringUtils.h"
 
 using namespace std;
 using namespace JSONRPC;
@@ -188,7 +187,7 @@ JSONRPC_STATUS CAddonsOperations::ExecuteAddon(const CStdString &method, ITransp
     {
       if (it != params.begin_array())
         argv += ",";
-      argv += StringUtils::Paramify(it->asString());
+      argv += it->asString();
     }
   }
   

@@ -89,9 +89,7 @@ void CGUIPanelContainer::Process(unsigned int currentTime, CDirtyRegionList &dir
     current++;
   }
 
-  // when we are scrolling up, offset will become lower (integer division, see offset calc)
-  // to have same behaviour when scrolling down, we need to set page control to offset+1
-  UpdatePageControl(offset + (m_scroller.IsScrollingDown() ? 1 : 0));
+  UpdatePageControl(offset);
 
   CGUIControl::Process(currentTime, dirtyregions);
 }

@@ -36,7 +36,7 @@ protected:
                         const std::string& fcr_type,
                         const std::string& fcr_name,
                         unsigned int f_port,
-                        const std::vector<std::pair<std::string, std::string> >& txt);
+                        std::map<std::string, std::string> txt);
 
   bool doRemoveService(const std::string& fcr_ident);
 

@@ -35,9 +35,7 @@ public:
   static bool MessagePump();
 
 protected:
-  static int  GetQueueSize();
 
 };
 
 #endif // WINDOW_EVENTS_ANDROID_H
-

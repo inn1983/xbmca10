@@ -129,28 +129,28 @@ IAESink *CAESinkFactory::Create(std::string &device, AEAudioFormat &desiredForma
   return NULL;
 }
 
-#define ENUMERATE_SINK(SINK, force) { \
+#define ENUMERATE_SINK(SINK) { \
   AESinkInfo info; \
   info.m_sinkName = #SINK; \
-  CAESink ##SINK::EnumerateDevicesEx(info.m_deviceInfoList, force); \
+  CAESink ##SINK::EnumerateDevicesEx(info.m_deviceInfoList); \
   if(!info.m_deviceInfoList.empty()) \
     list.push_back(info); \
 }
 
-void CAESinkFactory::EnumerateEx(AESinkInfoList &list, bool force)
+void CAESinkFactory::EnumerateEx(AESinkInfoList &list)
 {
 #if defined(TARGET_WINDOWS)
-  ENUMERATE_SINK(DirectSound, force);
+  ENUMERATE_SINK(DirectSound);
   if (g_sysinfo.IsVistaOrHigher() && !g_advancedSettings.m_audioForceDirectSound)
-    ENUMERATE_SINK(WASAPI, force);
+    ENUMERATE_SINK(WASAPI);
 #elif defined(TARGET_ANDROID)
-    ENUMERATE_SINK(AUDIOTRACK, force);
+    ENUMERATE_SINK(AUDIOTRACK);
 #elif defined(TARGET_LINUX) || defined(TARGET_FREEBSD)
   #if defined(HAS_ALSA)
-    ENUMERATE_SINK(ALSA, force);
+    ENUMERATE_SINK(ALSA);
   #endif
 
-    ENUMERATE_SINK(OSS, force);
+    ENUMERATE_SINK(OSS);
 #endif
 
 }

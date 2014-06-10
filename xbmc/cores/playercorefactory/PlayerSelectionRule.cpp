@@ -44,7 +44,6 @@ void CPlayerSelectionRule::Initialize(TiXmlElement* pRule)
   CLog::Log(LOGDEBUG, "CPlayerSelectionRule::Initialize: creating rule: %s", m_name.c_str());
 
   m_tInternetStream = GetTristate(pRule->Attribute("internetstream"));
-  m_tRemote = GetTristate(pRule->Attribute("remote"));
   m_tAudio = GetTristate(pRule->Attribute("audio"));
   m_tVideo = GetTristate(pRule->Attribute("video"));
 
@@ -111,7 +110,6 @@ void CPlayerSelectionRule::GetPlayers(const CFileItem& item, VECPLAYERCORES &vec
   if (m_tAudio >= 0 && (m_tAudio > 0) != item.IsAudio()) return;
   if (m_tVideo >= 0 && (m_tVideo > 0) != item.IsVideo()) return;
   if (m_tInternetStream >= 0 && (m_tInternetStream > 0) != item.IsInternetStream()) return;
-  if (m_tRemote >= 0 && (m_tRemote > 0) != item.IsRemote()) return;
 
   if (m_tBD >= 0 && (m_tBD > 0) != (item.IsBDFile() && item.IsOnDVD())) return;
   if (m_tDVD >= 0 && (m_tDVD > 0) != item.IsDVD()) return;
@@ -131,12 +129,6 @@ void CPlayerSelectionRule::GetPlayers(const CFileItem& item, VECPLAYERCORES &vec
     CStreamDetails streamDetails = item.GetVideoInfoTag()->m_streamDetails;
 
     if (CompileRegExp(m_audioCodec, regExp) && !MatchesRegExp(streamDetails.GetAudioCodec(), regExp)) return;
-    
-    std::stringstream itoa;
-    itoa << streamDetails.GetAudioChannels();
-    CStdString audioChannelsstr = itoa.str();
-
-    if (CompileRegExp(m_audioChannels, regExp) && !MatchesRegExp(audioChannelsstr, regExp)) return;
 
     if (CompileRegExp(m_videoCodec, regExp) && !MatchesRegExp(streamDetails.GetVideoCodec(), regExp)) return;
 

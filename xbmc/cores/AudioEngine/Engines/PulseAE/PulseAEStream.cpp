@@ -53,7 +53,6 @@ CPulseAEStream::CPulseAEStream(pa_context *context, pa_threaded_mainloop *mainLo
   m_Destroyed = false;
   m_Initialized = false;
   m_Paused = false;
-  m_ResumeCallback = false;
 
   m_Stream = NULL;
   m_Context = context;
@@ -203,9 +202,7 @@ CPulseAEStream::CPulseAEStream(pa_context *context, pa_threaded_mainloop *mainLo
     return /*false*/;
   }
 
-  const pa_buffer_attr *streamBuffer;
-  streamBuffer = pa_stream_get_buffer_attr(m_Stream);
-  m_cacheSize = streamBuffer->maxlength;
+  m_cacheSize = pa_stream_writable_size(m_Stream);
 
   pa_threaded_mainloop_unlock(m_MainLoop);
 
@@ -254,10 +251,6 @@ void CPulseAEStream::Destroy()
 
   if (m_Stream)
   {
-    pa_stream_set_state_callback(m_Stream, NULL, NULL);
-    pa_stream_set_write_callback(m_Stream, NULL, NULL);
-    pa_stream_set_latency_update_callback(m_Stream, NULL, NULL);
-    pa_stream_set_underflow_callback(m_Stream, NULL, NULL);
     pa_stream_disconnect(m_Stream);
     pa_stream_unref(m_Stream);
     m_Stream = NULL;
@@ -357,16 +350,13 @@ bool CPulseAEStream::IsDraining()
     pa_operation_unref(m_DrainOperation);
     m_DrainOperation = NULL;
   }
-  ProcessCallbacks();
+
   return false;
 }
 
 bool CPulseAEStream::IsDrained()
 {
-  bool ret = (m_DrainOperation == NULL);
-  ProcessCallbacks();
-
-  return ret;
+  return m_DrainOperation == NULL;
 }
 
 bool CPulseAEStream::IsDestroyed()
@@ -561,19 +551,9 @@ void CPulseAEStream::StreamUnderflowCallback(pa_stream *s, void *userdata)
 void CPulseAEStream::StreamDrainComplete(pa_stream *s, int success, void *userdata)
 {
   CPulseAEStream *stream = (CPulseAEStream *)userdata;
-  if(stream)
-  {
-    stream->SetDrained();
-    pa_threaded_mainloop_signal(stream->m_MainLoop, 0);
-  }
-}
-
-void CPulseAEStream::ProcessCallbacks()
-{
-  if(m_ResumeCallback && m_slave)
-    m_slave->Resume();
-
-  m_ResumeCallback = false;
+  if (stream->m_slave)
+    stream->m_slave->Resume();
+  pa_threaded_mainloop_signal(stream->m_MainLoop, 0);
 }
 
 inline bool CPulseAEStream::WaitForOperation(pa_operation *op, pa_threaded_mainloop *mainloop, const char *LogEntry = "")

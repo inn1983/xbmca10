@@ -1605,11 +1605,7 @@ bool CGUIMediaWindow::OnContextButton(int itemNumber, CONTEXT_BUTTON button)
     }
   case CONTEXT_BUTTON_PLUGIN_SETTINGS:
     {
-      CFileItemPtr item = m_vecItems->Get(itemNumber);
-      // CONTEXT_BUTTON_PLUGIN_SETTINGS can be called for plugin item
-      // or script item; or for the plugin directory current listing.
-      bool isPluginOrScriptItem = (item && (item->IsPlugin() || item->IsScript()));
-      CURL plugin(isPluginOrScriptItem ? item->GetPath() : m_vecItems->GetPath());
+      CURL plugin(m_vecItems->Get(itemNumber)->GetPath());
       ADDON::AddonPtr addon;
       if (CAddonMgr::Get().GetAddon(plugin.GetHostName(), addon))
         if (CGUIDialogAddonSettings::ShowAndGetInput(addon))
@@ -1688,8 +1684,7 @@ void CGUIMediaWindow::OnFilterItems(const CStdString &filter)
   
   m_viewControl.Clear();
   
-  CFileItemList items;
-  items.Copy(*m_vecItems, false); // use the original path - it'll likely be relied on for other things later.
+  CFileItemList items(m_vecItems->GetPath()); // use the original path - it'll likely be relied on for other things later.
   items.Append(*m_unfilteredItems);
   bool filtered = GetFilteredItems(filter, items);
 

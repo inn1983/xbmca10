@@ -47,13 +47,7 @@ public:
     m_filename = strFile;
   }
   virtual ~CDVDSubtitleParserCollection() { }
-  virtual CDVDOverlay* Parse(double iPts)
-  {
-    CDVDOverlay* o = m_collection.Get(iPts);
-    if(o == NULL)
-      return o;
-    return o->Clone();
-  }
+  virtual CDVDOverlay* Parse(double iPts) { return m_collection.Get(iPts); }
   virtual void         Reset()            { m_collection.Reset(); }
   virtual void         Dispose()          { m_collection.Clear(); }
 

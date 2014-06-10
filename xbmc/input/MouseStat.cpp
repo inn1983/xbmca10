@@ -46,21 +46,9 @@ void CMouseStat::Initialize()
 void CMouseStat::HandleEvent(XBMC_Event& newEvent)
 {
   // Save the mouse position and the size of the last move
-  int dx, dy;
-  if (newEvent.type == XBMC_MOUSEMOTION)
-  {
-    dx = newEvent.motion.x - m_mouseState.x;
-    dy = newEvent.motion.y - m_mouseState.y;
-  }
-  else if (newEvent.type == XBMC_MOUSEBUTTONDOWN || newEvent.type == XBMC_MOUSEBUTTONUP)
-  {
-    dx = newEvent.button.x - m_mouseState.x;
-    dy = newEvent.button.y - m_mouseState.y;
-  }
-  else
-  {
-    return;
-  }
+  int dx = newEvent.motion.x - m_mouseState.x;
+  int dy = newEvent.motion.y - m_mouseState.y;
+  
   m_mouseState.dx = dx;
   m_mouseState.dy = dy;
   m_mouseState.x  = std::max(0, std::min(m_maxX, m_mouseState.x + dx));

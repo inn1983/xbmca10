@@ -28,10 +28,4 @@
   XBMCTopShelfController *_topShelfController;
 }
 @property(nonatomic, readonly, retain) id topShelfController;
-
-- (id) initWithApplianceInfo:(id) applianceInfo;
-- (void) setTopShelfController:(id) topShelfControl;
-- (void) setApplianceCategories:(id) applianceCategories;
-- (void) XBMCfixUIDevice;
-- (id) init;
 @end

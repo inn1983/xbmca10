@@ -45,6 +45,7 @@ CDVDInputStreamPVRManager::CDVDInputStreamPVRManager(IDVDPlayer* pPlayer) : CDVD
   m_pLiveTV         = NULL;
   m_pOtherStream    = NULL;
   m_eof             = true;
+  m_bReopened       = false;
   m_iScanTimeout    = 0;
 }
 
@@ -310,20 +311,23 @@ bool CDVDInputStreamPVRManager::UpdateItem(CFileItem& item)
 
 CDVDInputStream::ENextStream CDVDInputStreamPVRManager::NextStream()
 {
-  if(!m_pFile)
-    return NEXTSTREAM_NONE;
+  if(!m_pFile) return NEXTSTREAM_NONE;
 
-  m_eof = IsEOF();
+  if(m_bReopened)
+  {
+    m_bReopened = false;
+    m_eof       = false;
+    return NEXTSTREAM_RETRY;
+  }
 
   if (m_pOtherStream)
     return m_pOtherStream->NextStream();
   else if(m_pFile->SkipNext())
   {
-    if (m_eof)
-      return NEXTSTREAM_OPEN;
-    else
-      return NEXTSTREAM_RETRY;
+    m_eof = false;
+    return NEXTSTREAM_OPEN;
   }
+
   return NEXTSTREAM_NONE;
 }
 
@@ -376,6 +380,7 @@ bool CDVDInputStreamPVRManager::CloseAndOpen(const char* strFile)
 
   if (Open(strFile, m_content))
   {
+    m_bReopened = true;
     return true;
   }
 

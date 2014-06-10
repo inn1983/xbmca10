@@ -47,7 +47,6 @@ private:
   int m_tAudio;
   int m_tVideo;
   int m_tInternetStream;
-  int m_tRemote;
 
   int m_tBD;
   int m_tDVD;

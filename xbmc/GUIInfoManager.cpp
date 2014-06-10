@@ -115,6 +115,7 @@ CGUIInfoManager::CGUIInfoManager(void) :
   m_playerShowInfo = false;
   m_fps = 0.0f;
   ResetLibraryBools();
+  m_debugFpsFlg = 0;	//added by inn
 }
 
 CGUIInfoManager::~CGUIInfoManager(void)
@@ -4157,7 +4158,9 @@ void CGUIInfoManager::UpdateFPS()
     fTimeSpan /= 1000.0f;
     m_fps = m_frameCounter / fTimeSpan;
     m_lastFPSTime = curTime;
+	CLog::Log(LOGDEBUG, "line %d: m_frameCounter is %d, fTimeSpan is %f", __LINE__, m_frameCounter, fTimeSpan);	//added by inn
     m_frameCounter = 0;
+	m_debugFpsFlg = 1;	//added by inn
   }
 }
 
@@ -5141,7 +5144,7 @@ void CGUIInfoManager::SetCurrentSlide(CFileItem &item)
 {
   if (m_currentSlide->GetPath() != item.GetPath())
   {
-    if (!item.GetPictureInfoTag()->Loaded()) // If picture metadata has not been loaded yet, load it now
+    if (!item.HasPictureInfoTag() && !item.GetPictureInfoTag()->Loaded())
       item.GetPictureInfoTag()->Load(item.GetPath());
     *m_currentSlide = item;
   }

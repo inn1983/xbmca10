@@ -21,7 +21,6 @@
 #include "PeripheralBusUSB.h"
 #include "peripherals/Peripherals.h"
 #include "utils/log.h"
-#include "osx/DarwinUtils.h"
 
 #include <sys/param.h>
 
@@ -225,7 +224,7 @@ void CPeripheralBusUSB::DeviceAttachCallback(CPeripheralBusUSB* refCon, io_itera
       result = (*interfaceInterface)->GetInterfaceClass(interfaceInterface, &bInterfaceClass);
       if (bInterfaceClass == kUSBHIDInterfaceClass || bInterfaceClass == kUSBCommunicationDataInterfaceClass)
       {
-        std::string ttlDeviceFilePath;
+        char ttlDeviceFilePath[MAXPATHLEN] = {0};
         CFStringRef deviceFilePathAsCFString;
         USBDevicePrivateData *privateDataRef;
         privateDataRef = new USBDevicePrivateData;
@@ -249,16 +248,16 @@ void CPeripheralBusUSB::DeviceAttachCallback(CPeripheralBusUSB* refCon, io_itera
               kIOServicePlane, CFSTR(kIOCalloutDeviceKey), kCFAllocatorDefault, kIORegistryIterateRecursively);
             if (deviceFilePathAsCFString)
             {
-              // Convert the path from a CFString to a std::string
-              if (!DarwinCFStringRefToUTF8String(deviceFilePathAsCFString, ttlDeviceFilePath))
-                CLog::Log(LOGWARNING, "CPeripheralBusUSB::DeviceAttachCallback failed to convert CFStringRef");
+              // Convert the path from a CFString to a NULL-terminated C string
+              CFStringGetCString((CFStringRef)deviceFilePathAsCFString,
+                ttlDeviceFilePath, MAXPATHLEN - 1, kCFStringEncodingASCII);
               CFRelease(deviceFilePathAsCFString);
             }
             IOObjectRelease(parent);
           }
         }
-        if (!ttlDeviceFilePath.empty())
-          privateDataRef->result.m_strLocation.Format("%s", ttlDeviceFilePath.c_str());
+        if (strlen(ttlDeviceFilePath))
+          privateDataRef->result.m_strLocation.Format("%s", ttlDeviceFilePath);
         else
           privateDataRef->result.m_strLocation.Format("%d", locationId);
 
@@ -267,7 +266,6 @@ void CPeripheralBusUSB::DeviceAttachCallback(CPeripheralBusUSB* refCon, io_itera
         else
           privateDataRef->result.m_type = refCon->GetType(bDeviceClass);
 
-        privateDataRef->result.m_iSequence = refCon->GetNumberOfPeripheralsWithId(privateDataRef->result.m_iVendorId, privateDataRef->result.m_iProductId);
         if (!refCon->m_scan_results.ContainsResult(privateDataRef->result))
         {
           // register this usb device for an interest notification callback. 

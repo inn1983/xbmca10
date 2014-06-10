@@ -22,7 +22,6 @@
 #include "music/MusicDatabase.h"
 #include "FileItem.h"
 #include "Util.h"
-#include "utils/StringUtils.h"
 #include "utils/URIUtils.h"
 #include "music/tags/MusicInfoTag.h"
 #include "music/Artist.h"
@@ -532,7 +531,7 @@ JSONRPC_STATUS CAudioLibrary::Scan(const CStdString &method, ITransportLayer *tr
   if (directory.empty())
     cmd = "updatelibrary(music)";
   else
-    cmd.Format("updatelibrary(music, %s)", StringUtils::Paramify(directory).c_str());
+    cmd.Format("updatelibrary(music, %s)", directory.c_str());
 
   CApplicationMessenger::Get().ExecBuiltIn(cmd);
   return ACK;
@@ -542,7 +541,7 @@ JSONRPC_STATUS CAudioLibrary::Export(const CStdString &method, ITransportLayer *
 {
   CStdString cmd;
   if (parameterObject["options"].isMember("path"))
-    cmd.Format("exportlibrary(music, false, %s)", StringUtils::Paramify(parameterObject["options"]["path"].asString()));
+    cmd.Format("exportlibrary(music, false, %s)", parameterObject["options"]["path"].asString());
   else
     cmd.Format("exportlibrary(music, true, %s, %s)",
       parameterObject["options"]["images"].asBoolean() ? "true" : "false",

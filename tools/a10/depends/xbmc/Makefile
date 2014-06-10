@@ -15,24 +15,14 @@ CONFIGURE=./configure \
 	--enable-neon \
 	--enable-gles \
 	--disable-mysql \
-	--disable-optical-drive \
-	--disable-crystalhd \
-	--disable-vtbdecoder \
-	--disable-pulse \
-	--disable-projectm \
-	--disable-libcec \
-	--disable-optimizations \
 
 SRC=../../../../
 
 all: dep
 	(cd $(SRC); make -j$(JOBS))
 
-install:
-	(cd $(SRC); make install)
-
 install-only:
-	(cd $(SRC); make install)
+	(cd $(SRC); make -j$(JOBS) install)
 
 bin-only:
 	(cd $(SRC); make -j$(JOBS))

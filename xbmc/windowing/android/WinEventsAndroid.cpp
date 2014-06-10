@@ -19,7 +19,6 @@
 */
 
 #include "system.h"
-#include <list>
 #include "windowing/WinEvents.h"
 #include "WinEventsAndroid.h"
 #include "input/XBMC_vkeys.h"
@@ -33,7 +32,7 @@ static CCriticalSection g_inputCond;
 
 PHANDLE_EVENT_FUNC CWinEventsBase::m_pEventFunc = NULL;
 
-static std::list<XBMC_Event> events;
+static std::vector<XBMC_Event> events;
 
 void CWinEventsAndroid::DeInit()
 {
@@ -52,34 +51,20 @@ void CWinEventsAndroid::MessagePush(XBMC_Event *newEvent)
 bool CWinEventsAndroid::MessagePump()
 {
   bool ret = false;
+  std::vector<XBMC_Event> copy_events;
+  { // double-buffered events to avoid constant locking for OnEvent().
+    CSingleLock lock(g_inputCond);
+    copy_events = events;
+    events.clear();
+  }
 
-  // Do not always loop, only pump the initial queued count events. else if ui keep pushing 
-  // events the loop won't finish then it will block xbmc main message loop. 
-  for (int pumpEventCount = GetQueueSize(); pumpEventCount > 0; --pumpEventCount) 
+  for (std::vector<XBMC_Event>::iterator iter = copy_events.begin(); iter != copy_events.end(); iter++)
   {
-  
-    // Pop up only one event per time since in App::OnEvent it may init modal dialog which init 
-    // deeper message loop and call the deeper MessagePump from there. 
-    XBMC_Event pumpEvent; 
-    { 
-      CSingleLock lock(g_inputCond); 
-      if (events.size() == 0) 
-        return ret; 
-      pumpEvent = events.front(); 
-      events.pop_front(); 
-    }  
+    ret |= g_application.OnEvent(*iter);
 
-    ret |= g_application.OnEvent(pumpEvent);
-
-    if (pumpEvent.type == XBMC_MOUSEBUTTONUP)
+    if (iter->type == XBMC_MOUSEBUTTONUP)
       g_windowManager.SendMessage(GUI_MSG_UNFOCUS_ALL, 0, 0, 0, 0);
   }
 
   return ret;
-}
-
-int CWinEventsAndroid::GetQueueSize()
-{
-  CSingleLock lock(g_inputCond);
-  return events.size();
 }

@@ -31,7 +31,6 @@
 #undef BOOL
 
 #import <Foundation/Foundation.h>
-#include <objc/runtime.h>
 
 #import "IOSScreenManager.h"
 #import "XBMCController.h"
@@ -219,8 +218,7 @@ static CEvent screenChangeEvent;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_4_2
   res.size = screen.preferredMode.size;
 #else
-  Class brwin = objc_getClass("BRWindow");
-  res.size = [brwin interfaceFrame].size;
+  res.size = [BRWindow interfaceFrame].size;
 #endif
 #else
   //main screen is in portrait mode (physically) so exchange height and width

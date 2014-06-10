@@ -21,7 +21,7 @@ all: .installed
 		--host=$(HOST) \
 		--build=$(BUILD) \
 		--prefix=$(SDKSTAGE)/usr \
-		--libdir=$(SDKSTAGE)/usr/lib/arm-linux-gnueabi$(HF) \
+		--libdir=$(SDKSTAGE)/usr/lib/arm-linux-gnueabihf \
 	)
 	touch $@
 

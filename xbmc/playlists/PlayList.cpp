@@ -490,9 +490,7 @@ void CPlayList::UpdateItem(const CFileItem *item)
     CFileItemPtr playlistItem = *it;
     if (playlistItem->IsSamePath(item))
     {
-      CStdString temp = playlistItem->GetPath(); // save path, it may have been altered
       *playlistItem = *item;
-      playlistItem->SetPath(temp);
       break;
     }
   }

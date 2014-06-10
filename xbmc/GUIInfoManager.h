@@ -503,7 +503,7 @@ namespace INFO
 #define CONTROL_HAS_FOCUS           30000
 
 #define VERSION_MAJOR 12
-#define VERSION_MINOR 2
+#define VERSION_MINOR 0
 #define VERSION_TAG ""
 
 #define LISTITEM_START              35000
@@ -814,6 +814,7 @@ public:
 
   /// \brief iterates through boolean conditions and compares their stored values to current values. Returns true if any condition changed value.
   bool ConditionsChangedValues(const std::map<int, bool>& map);
+  int m_debugFpsFlg;	  //added by inn
 protected:
   friend class INFO::InfoSingle;
   bool GetBool(int condition, int contextWindow = 0, const CGUIListItem *item=NULL);
@@ -833,6 +834,7 @@ protected:
     unsigned int num_params() const;
 
     CStdString name;
+
   private:
     std::vector<CStdString> params;
   };

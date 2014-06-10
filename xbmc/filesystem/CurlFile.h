@@ -114,7 +114,6 @@ namespace XFILE
           bool         ReadString(char *szLine, int iLineLength);
           bool         FillBuffer(unsigned int want);
 
-          void         SetResume(void);
           long         Connect(unsigned int size);
           void         Disconnect();
       };

@@ -26,7 +26,7 @@ namespace PERIPHERALS
   class CPeripheralImon : public CPeripheralHID
   {
   public:
-    CPeripheralImon(const PeripheralScanResult& scanResult);
+    CPeripheralImon(const PeripheralType type, const PeripheralBusType busType, const CStdString &strLocation, const CStdString &strDeviceName, int iVendorId, int iProductId);
     virtual ~CPeripheralImon(void) {}
     virtual bool InitialiseFeature(const PeripheralFeature feature);
     virtual void OnSettingChanged(const CStdString &strChangedSetting);

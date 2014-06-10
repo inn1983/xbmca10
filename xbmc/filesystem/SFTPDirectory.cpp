@@ -20,7 +20,6 @@
 
 #include "SFTPDirectory.h"
 #ifdef HAS_FILESYSTEM_SFTP
-#include "utils/log.h"
 #include "URL.h"
 
 using namespace XFILE;
@@ -39,19 +38,5 @@ bool CSFTPDirectory::GetDirectory(const CStdString& strPath, CFileItemList &item
 
   CSFTPSessionPtr session = CSFTPSessionManager::CreateSession(url);
   return session->GetDirectory(url.GetWithoutFilename().c_str(), url.GetFileName().c_str(), items);
-}
-
-bool CSFTPDirectory::Exists(const char* strPath)
-{
-  CURL url(strPath);
-
-  CSFTPSessionPtr session = CSFTPSessionManager::CreateSession(url);
-  if (session)
-    return session->DirectoryExists(url.GetFileName().c_str());
-  else
-  {
-    CLog::Log(LOGERROR, "SFTPDirectory: Failed to create session to check exists");
-    return false;
-  }
 }
 #endif

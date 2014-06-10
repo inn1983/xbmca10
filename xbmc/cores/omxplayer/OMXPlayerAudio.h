@@ -42,6 +42,7 @@ using namespace std;
 class OMXPlayerAudio : public CThread
 {
 protected:
+  CCriticalSection      m_flushLock;
   CDVDMessageQueue      m_messageQueue;
   CDVDMessageQueue      &m_messageParent;
 
@@ -57,7 +58,7 @@ protected:
   AEAudioFormat             m_format;
   CAEChannelInfo            m_channelLayout;
   COMXAudioCodecOMX         *m_pAudioCodec;
-  int                       m_speed;
+  unsigned int              m_speed;
   bool                      m_silence;
   double                    m_audioClock;
   double m_error;    //last average error
@@ -88,6 +89,7 @@ protected:
   bool                      m_DecoderOpen;
 
   DllBcmHost                m_DllBcmHost;
+  bool                      m_send_eos;
   bool                      m_bad_state;
 
   virtual void OnStartup();
@@ -105,7 +107,7 @@ public:
   bool IsInited() const                             { return m_messageQueue.IsInited(); }
   int  GetLevel() const                             { return m_messageQueue.GetLevel(); }
   bool IsStalled()                                  { return m_stalled;  }
-  bool IsEOS();
+  bool IsEOS()                                      { return m_send_eos; };
   void WaitForBuffers();
   bool CloseStream(bool bWaitForBuffers);
   bool CodecChange();
@@ -120,7 +122,6 @@ public:
   double GetCacheTime();
   double GetCurrentPTS() { return m_audioClock; };
   void WaitCompletion();
-  void SubmitEOS();
   void  RegisterAudioCallback(IAudioCallback* pCallback);
   void  UnRegisterAudioCallback();
   void SetCurrentVolume(float fVolume);

@@ -25,7 +25,7 @@
 
 #if defined(ALLWINNERA10) && !defined(TARGET_ANDROID)
 #include "cores/VideoRenderers/LinuxRendererA10.h"
-static struct mali_native_window g_fbwin;
+static mali_native_window g_fbwin;
 static double       g_refreshRate;
 #endif
 
@@ -33,7 +33,6 @@ CEGLNativeTypeA10::CEGLNativeTypeA10()
 {
 #if defined(ALLWINNERA10) && !defined(TARGET_ANDROID)
   int width, height;
-
   A10VLInit(width, height, g_refreshRate);
   g_fbwin.width  = width;
   g_fbwin.height = height;

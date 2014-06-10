@@ -111,10 +111,11 @@ namespace PERIPHERALS
     /*!
      * @brief Creates a new instance of a peripheral.
      * @param bus The bus on which this peripheral is present.
-     * @param result The scan result from the device scanning code.
+     * @param type The type of the new peripheral.
+     * @param strLocation The location on the bus.
      * @return The new peripheral or NULL if it could not be created.
      */
-    CPeripheral *CreatePeripheral(CPeripheralBus &bus, const PeripheralScanResult& result);
+    CPeripheral *CreatePeripheral(CPeripheralBus &bus, const PeripheralType type, const CStdString &strLocation, int iVendorId = 0, int iProductId = 0);
 
     /*!
      * @brief Add the settings that are defined in the mappings file to the peripheral (if there is anything defined).
@@ -199,7 +200,7 @@ namespace PERIPHERALS
   private:
     CPeripherals(void);
     bool LoadMappings(void);
-    bool GetMappingForDevice(const CPeripheralBus &bus, PeripheralScanResult& result) const;
+    int GetMappingForDevice(const CPeripheralBus &bus, const PeripheralType classType, int iVendorId, int iProductId) const;
     static void GetSettingsFromMappingsFile(TiXmlElement *xmlNode, std::map<CStdString, CSetting *> &m_settings);
 
     bool                                 m_bInitialised;
